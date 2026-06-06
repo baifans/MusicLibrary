@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.PlaylistMapper">
+
+    <!-- 查询所有歌单，关联 user 表获取用户名 -->
+    <select id="selectAll" resultType="com.example.entity.Playlist">
+        select
+            p.playlist_id as playlistId,
+            p.playlist_name as playlistName,
+            p.user_id as userId,
+            p.create_time as createTime,
+            u.username
+        from playlist p
+        left join user u on p.user_id = u.user_id
+        order by p.playlist_id desc
+    </select>
+
+    <!-- 查询指定歌单下的所有歌曲，关联 singer 表获取歌手名 -->
+    <select id="selectSongsByPlaylistId" resultType="com.example.entity.Song">
+        select
+            s.song_id as songId,
+            s.song_name as songName,
+            s.duration,
+            sg.singer_name as singerName
+        from playlist_song ps
+        left join song s on ps.song_id = s.song_id
+        left join singer sg on s.singer_id = sg.singer_id
+        where ps.playlist_id = #{playlistId}
+        order by s.song_id
+    </select>
+
+</mapper>

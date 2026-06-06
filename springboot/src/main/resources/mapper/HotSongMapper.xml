@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.HotSongMapper">
+
+    <!-- 分页条件查询热歌（基于视图 v_hot_song） -->
+    <select id="selectPage" resultType="com.example.entity.Song">
+        SELECT
+            song_id AS songId,
+            song_name AS songName,
+            singer_name AS singerName,
+            duration,
+            play_count AS playCount
+        FROM v_hot_song
+        <where>
+            <if test="songName != null and songName != ''">
+                AND song_name LIKE CONCAT('%', #{songName}, '%')
+            </if>
+            <if test="singerName != null and singerName != ''">
+                AND singer_name LIKE CONCAT('%', #{singerName}, '%')
+            </if>
+        </where>
+        ORDER BY play_count DESC
+    </select>
+
+</mapper>

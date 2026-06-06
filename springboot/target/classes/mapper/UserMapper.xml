@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.UserMapper">
+
+
+     <!-- 根据ID查询 -->
+    <select id="selectById" resultType="com.example.entity.User">
+        select user_id as id,
+               username,
+               password,
+               name,
+               role,
+               email,
+               register_time as registerTime
+        from user
+        where user_id = #{id}
+    </select>
+
+
+    <!-- 根据用户名查询 -->
+    <select id="selectByUsername" resultType="com.example.entity.User">
+        select user_id AS id,
+               username,
+               name,
+               password,
+               email,
+               role,
+               register_time AS registerTime
+        from user
+        where username = #{username}
+    </select>
+
+
+    <!-- 新增用户（注册） -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="user_id">
+        insert INTO user(username, `name`, password, email, role, register_time)
+        values (#{username}, #{name}, #{password}, #{email}, 'USER', NOW())
+    </insert>
+
+    <!-- 修改用户信息 -->
+    <update id="updateById" parameterType="com.example.entity.User">
+        update user
+        set
+            username = #{username},
+            password = #{password},
+            name = #{name},
+            role = #{role},
+            email = #{email},
+            register_time = #{registerTime}
+        where user_id = #{id}
+    </update>
+
+</mapper>

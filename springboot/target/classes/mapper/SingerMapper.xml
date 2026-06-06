@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.SingerMapper">
+
+    <!-- 查询全部（支持按歌手名条件查询） -->
+    <select id="selectAll" resultType="com.example.entity.Singer">
+        select
+            singer_id as singerId,
+            singer_name as singerName,
+            country,
+            song_count as songCount
+        from singer
+        <where>
+            <if test="singerName != null and singerName != ''">
+                and singer_name like concat('%', #{singerName}, '%')
+            </if>
+        </where>
+        order by singer_id desc
+    </select>
+
+    <!-- 调用存储过程删除歌手（事务控制下的删除操作） -->
+    <select id="callDeleteSinger" statementType="CALLABLE">
+        {call sp_delete_singer(#{singerId, mode=IN})}
+    </select>
+
+</mapper>

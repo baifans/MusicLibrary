@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.SongMapper">
+
+    <!-- 查询全部（支持歌曲名、歌手名条件查询） -->
+    <select id="selectAll" resultType="com.example.entity.Song">
+        select
+            s.song_id as songId,
+            s.song_name as songName,
+            s.singer_id as singerId,
+            s.duration,
+            s.play_count as playCount,
+            sg.singer_name as singerName
+        from song s
+        left join singer sg
+            on s.singer_id = sg.singer_id
+
+        <where>
+            <if test="songName != null and songName != ''">
+                and s.song_name like concat('%', #{songName}, '%')
+            </if>
+
+            <if test="singerName != null and singerName != ''">
+                and sg.singer_name like concat('%', #{singerName}, '%')
+            </if>
+        </where>
+
+        order by s.song_id desc
+    </select>
+
+
+    <!-- 新增歌曲 -->
+    <insert id="insert"
+            parameterType="com.example.entity.Song"
+            useGeneratedKeys="true"
+            keyProperty="songId">
+        insert into song
+        (
+            song_name,
+            singer_id,
+            duration
+        )
+        values
+        (
+            #{songName},
+            #{singerId},
+            #{duration}
+        )
+
+    </insert>
+
+
+    <!-- 修改歌曲 -->
+    <update id="updateById"
+            parameterType="com.example.entity.Song">
+
+        update song
+        set
+            song_name = #{songName},
+            singer_id = #{singerId},
+            duration = #{duration}
+        where song_id = #{songId}
+
+    </update>
+
+    <!-- 调用存储过程修改歌手 -->
+    <select id="callChangeSongSinger" statementType="CALLABLE">
+        {call sp_change_song_singer(#{songId, mode=IN}, #{newSingerId, mode=IN})}
+    </select>
+
+    <!-- 调用存储过程删除歌曲（事务控制） -->
+    <select id="callDeleteSong" statementType="CALLABLE">
+        {call sp_delete_song(#{songId, mode=IN})}
+    </select>
+
+</mapper>

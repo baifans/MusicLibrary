@@ -1,1 +1,2 @@
-2026-NKU-MusicLibrary
+2026-Spring-NKU-数据库课程设计
+这是一个音乐管理库
